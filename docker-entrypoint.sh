@@ -19,6 +19,12 @@ fi
 echo "Running database migrations..."
 php artisan migrate --force
 
+# Ensure APP_KEY is set or generate a fallback key
+if [ -z "${APP_KEY}" ]; then
+    echo "WARNING: APP_KEY is not defined in Render environment. Generating a dynamic fallback key..."
+    php artisan key:generate --force
+fi
+
 # Cache configuration, routes, and views at boot (runtime)
 # This ensures that actual Render environment variables are read and cached
 echo "Caching Laravel config, routes, and views for production..."

@@ -26,7 +26,8 @@ WORKDIR /app
 # Set production environment variables
 ENV NODE_ENV=production \
     APP_ENV=production \
-    APP_DEBUG=false
+    APP_DEBUG=false \
+    COMPOSER_MEMORY_LIMIT=-1
 
 # Copy composer package descriptors for dependency caching
 COPY composer.json composer.lock ./
