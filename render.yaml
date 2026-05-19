@@ -10,6 +10,8 @@ services:
         value: production
       - key: APP_DEBUG
         value: "false"
+      - key: APP_KEY
+        sync: false # Render will prompt you to securely enter this value
       - key: APP_URL
         value: https://nexusai-research-hub.onrender.com # Replace with your actual Render URL once deployed
       - key: DB_CONNECTION
