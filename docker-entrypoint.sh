@@ -1,11 +1,10 @@
 #!/bin/sh
 set -e
 
-# Ensure SQLite database exists if DB_CONNECTION is sqlite
-if [ "${DB_CONNECTION}" = "sqlite" ] || [ -z "${DB_CONNECTION}" ]; then
-    # Default SQLite path in Laravel 11/12 is database/database.sqlite
+# Only create SQLite database if explicitly using sqlite
+if [ "${DB_CONNECTION}" = "sqlite" ]; then
     DB_PATH="/app/database/database.sqlite"
-    
+
     if [ ! -f "$DB_PATH" ]; then
         echo "Creating SQLite database at $DB_PATH..."
         mkdir -p "$(dirname "$DB_PATH")"
@@ -15,13 +14,27 @@ if [ "${DB_CONNECTION}" = "sqlite" ] || [ -z "${DB_CONNECTION}" ]; then
     fi
 fi
 
-# Run migrations and handle connection failures gracefully
-echo "Running database migrations..."
-if php artisan migrate --force; then
-    echo "Database migrations ran successfully!"
+# Warn early if MongoDB is selected but URI is missing
+if [ "${DB_CONNECTION}" = "mongodb" ]; then
+    if [ -z "${MONGODB_URI}" ]; then
+        echo "WARNING: DB_CONNECTION is set to mongodb but MONGODB_URI is not set!"
+        echo "The container will attempt to boot anyway so you can inspect settings."
+    else
+        echo "MongoDB connection detected. MONGODB_URI is set."
+    fi
+fi
+
+# Run migrations only for relational databases; MongoDB is schemaless
+if [ "${DB_CONNECTION}" = "mongodb" ]; then
+    echo "Skipping relational migrations — MongoDB is schemaless."
 else
-    echo "WARNING: Database migrations failed! This usually happens if your MONGODB_URI or DB_CONNECTION details are empty, invalid, or unable to connect."
-    echo "The container will attempt to boot anyway so you can inspect settings."
+    echo "Running database migrations..."
+    if php artisan migrate --force; then
+        echo "Database migrations ran successfully!"
+    else
+        echo "WARNING: Database migrations failed! This usually happens if your DB_CONNECTION details are empty, invalid, or unable to connect."
+        echo "The container will attempt to boot anyway so you can inspect settings."
+    fi
 fi
 
 # Ensure APP_KEY is set or generate a fallback key
