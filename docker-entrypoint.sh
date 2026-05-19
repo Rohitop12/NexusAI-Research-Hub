@@ -15,9 +15,14 @@ if [ "${DB_CONNECTION}" = "sqlite" ] || [ -z "${DB_CONNECTION}" ]; then
     fi
 fi
 
-# Run migrations
+# Run migrations and handle connection failures gracefully
 echo "Running database migrations..."
-php artisan migrate --force
+if php artisan migrate --force; then
+    echo "Database migrations ran successfully!"
+else
+    echo "WARNING: Database migrations failed! This usually happens if your MONGODB_URI or DB_CONNECTION details are empty, invalid, or unable to connect."
+    echo "The container will attempt to boot anyway so you can inspect settings."
+fi
 
 # Ensure APP_KEY is set or generate a fallback key
 if [ -z "${APP_KEY}" ]; then
