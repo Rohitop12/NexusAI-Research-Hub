@@ -392,7 +392,7 @@ function Landing({ auth }) {
 
       {/* Professional Footer */}
       <footer className="bg-bg-main pt-24 pb-12 relative overflow-hidden border-t border-ui-border/50">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-accent-blue/30 to-transparent"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-black/30 to-transparent"></div>
 
         <div className="max-w-7xl mx-auto px-10 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">

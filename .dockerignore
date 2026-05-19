@@ -1,0 +1,17 @@
+.git
+.github
+node_modules
+vendor
+public/build
+storage/*.sqlite
+database/*.sqlite
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+tests
+docker-compose.yml
+Dockerfile
+.dockerignore
+npm-debug.log
+composer.phar
