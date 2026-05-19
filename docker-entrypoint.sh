@@ -25,6 +25,17 @@ if [ -z "${APP_KEY}" ]; then
     php artisan key:generate --force
 fi
 
+# Clear any cached configurations or states
+echo "Clearing old config, cache, routes, and views..."
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+
+# Create storage symlink
+echo "Creating storage symlink..."
+php artisan storage:link --force
+
 # Cache configuration, routes, and views at boot (runtime)
 # This ensures that actual Render environment variables are read and cached
 echo "Caching Laravel config, routes, and views for production..."
