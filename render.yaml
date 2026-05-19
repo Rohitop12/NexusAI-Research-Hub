@@ -13,7 +13,7 @@ services:
       - key: APP_URL
         value: https://nexusai-research-hub.onrender.com # Replace with your actual Render URL once deployed
       - key: DB_CONNECTION
-        value: sqlite
+        value: mongodb
       - key: SESSION_DRIVER
         value: cookie
       - key: CACHE_STORE
