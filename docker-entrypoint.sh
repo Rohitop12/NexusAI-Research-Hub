@@ -1,6 +1,17 @@
 #!/bin/sh
 set -e
 
+# Ensure we have a .env file so Laravel boots and commands run correctly
+if [ ! -f .env ]; then
+    if [ -f .env.example ]; then
+        echo ".env file not found. Creating it from .env.example..."
+        cp .env.example .env
+    else
+        echo ".env file not found and .env.example not found. Creating empty .env file..."
+        touch .env
+    fi
+fi
+
 # Only create SQLite database if explicitly using sqlite
 if [ "${DB_CONNECTION}" = "sqlite" ]; then
     DB_PATH="/app/database/database.sqlite"
@@ -40,30 +51,34 @@ fi
 # Ensure APP_KEY is set or generate a fallback key
 if [ -z "${APP_KEY}" ]; then
     echo "WARNING: APP_KEY is not defined in Render environment. Generating a dynamic fallback key..."
-    php artisan key:generate --force
+    if php artisan key:generate --force; then
+        echo "Dynamic fallback key generated successfully!"
+    else
+        echo "WARNING: Failed to generate a fallback key! Laravel may fail to boot if APP_KEY is empty."
+    fi
 fi
 
 # Clear any cached configurations or states
 echo "Clearing old config, cache, routes, and views..."
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
+php artisan config:clear || echo "WARNING: php artisan config:clear failed!"
+php artisan cache:clear || echo "WARNING: php artisan cache:clear failed!"
+php artisan route:clear || echo "WARNING: php artisan route:clear failed!"
+php artisan view:clear || echo "WARNING: php artisan view:clear failed!"
 
 # Create storage symlink
 echo "Creating storage symlink..."
-php artisan storage:link --force
+php artisan storage:link --force || echo "WARNING: php artisan storage:link failed!"
 
 # Cache configuration, routes, and views at boot (runtime)
 # This ensures that actual Render environment variables are read and cached
 echo "Caching Laravel config, routes, and views for production..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan config:cache || echo "WARNING: php artisan config:cache failed!"
+php artisan route:cache || echo "WARNING: php artisan route:cache failed!"
+php artisan view:cache || echo "WARNING: php artisan view:cache failed!"
 
 # Read dynamic Render PORT and map to FrankenPHP SERVER_NAME
 PORT="${PORT:-80}"
-export SERVER_NAME=":${PORT}"
+export SERVER_NAME="http://:${PORT}"
 
 echo "Starting FrankenPHP server on port $PORT..."
 exec frankenphp run --config /etc/caddy/Caddyfile
