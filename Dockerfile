@@ -15,7 +15,8 @@ RUN install-php-extensions \
     mongodb \
     zip \
     opcache \
-    intl
+    intl \
+    pdo_mysql
 
 # Copy composer from the official image
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

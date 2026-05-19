@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: nexusai-research-hub
+    runtime: docker
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    plan: starter
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_URL
+        value: https://nexusai-research-hub.onrender.com # Replace with your actual Render URL once deployed
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: SESSION_DRIVER
+        value: cookie
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: MONGODB_URI
+        sync: false # Render will prompt you to securely enter this value
+      - key: MONGODB_DATABASE
+        value: nexusai
+      - key: GEMINI_API_KEY
+        sync: false # Render will prompt you to securely enter this value
+      - key: GOOGLE_CLIENT_ID
+        sync: false # Render will prompt you to securely enter this value
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false # Render will prompt you to securely enter this value
+      - key: GOOGLE_REDIRECT_URI
+        value: https://nexusai-research-hub.onrender.com/auth/google/callback # Update domain after creation
